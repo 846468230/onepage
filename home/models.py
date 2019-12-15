@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     chinese_name = models.CharField(max_length=128,default='',verbose_name="姓名")
+    quote = models.CharField(max_length=128,default='',verbose_name="短句或名言") 
     #image = models.ImageField(upload_to='photos/%Y/%m/%d/',default='',verbose_name="头像")
     age = models.PositiveIntegerField(verbose_name="年龄")
     occupation = models.CharField(max_length=100,null=True,blank=True,default='',verbose_name="职业")
@@ -16,6 +18,18 @@ class UserProfile(models.Model):
     wechat = models.CharField(max_length=100, null=True, blank=True, default='',verbose_name="微信")
     homepage = models.URLField(verbose_name="个人主页")
     content = models.TextField(verbose_name="自我介绍",default='')
+    def skills_with_icon(self):
+        return skills.objects.filter(status=skills.STATUS_NORMAL).filter(owner=self.user).filter(with_icon=skills.ICON_NORMAL)
+    def skills_without_icon(self):
+        return skills.objects.filter(status=skills.STATUS_NORMAL).filter(owner=self.user).filter(with_icon=skills.ICON_WITHOUT)
+    def education(self):
+        return eduction.objects.filter(status=eduction.STATUS_NORMAL).filter(owner=self.user).filter(kind = eduction.KIND_EDUCTION)
+    def exp(self):
+        return eduction.objects.filter(status=eduction.STATUS_NORMAL).filter(owner=self.user).filter(kind = eduction.KIND_EXPERIENCE)
+    def photos(self):
+        return photos.objects.filter(status=photos.STATUS_NORMAL).filter(owner=self.user)
+    def photos_kind(self):
+        return photos.objects.values("kind").distinct()
     class Meta:
         verbose_name = verbose_name_plural = "用户信息"
 
@@ -33,7 +47,7 @@ class skills(models.Model):
         (ICON_WITHOUT,'无图标'),
     ) 
     ICON_ITEMS = (
-        ("icon-screen-smartphone",'icon-screen-smartphone'),
+        ("icon-basic-photo",'icon-basic-photo'),
         ("icon-basic-keyboard",'icon-basic-keyboard'),
         ("icon-basic-mouse",'icon-basic-mouse'),
     )
@@ -42,7 +56,7 @@ class skills(models.Model):
     with_icon = models.PositiveIntegerField(default=ICON_NORMAL,choices=CHOICE_ITEMS,verbose_name="有无图标") 
     icon = models.CharField(max_length=200,default=ICON_ITEMS[0][0],null=True, blank=True,choices=ICON_ITEMS,verbose_name="图标")
     length = models.PositiveIntegerField(null=True, blank=True,verbose_name="进度条长度") 
-    content =models.TextField(verbose_name="技能介绍",default='')
+    content =models.TextField(null=True, blank=True,verbose_name="技能介绍",default='')
     owner = models.ForeignKey(User,verbose_name="技能属主",on_delete=models.CASCADE)
     def __str__(self):
         return self.skill+self.owner.username
@@ -95,3 +109,14 @@ class photos(models.Model):
         return self.name+self.owner.username
     class Meta:
         verbose_name = verbose_name_plural = "照片"
+
+class message(models.Model):
+    name = models.CharField(max_length=100,verbose_name="名称")
+    subject = models.CharField(max_length=100, null=True, blank=True, default='',verbose_name="主题")
+    email = models.EmailField(default='',verbose_name="电子邮箱")
+    owner = models.ForeignKey(User,verbose_name="消息属主",on_delete=models.CASCADE)
+    content = models.TextField(verbose_name="消息内容",default='')
+    def __str__(self):
+        return self.name
+    class Meta:
+        verbose_name = verbose_name_plural = "消息"

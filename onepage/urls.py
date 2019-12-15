@@ -18,9 +18,13 @@ from django.urls import path
 from django.urls import include,reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic import RedirectView
+from django.conf.urls.static import static
+from django.conf import settings
+import xadmin
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('adminx/', admin.site.urls),
     path('home/',include("home.urls"),name="home"),
     path('', RedirectView.as_view(url=reverse_lazy('home:homepage'))),
-]
+    path('admin/',xadmin.site.urls),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
