@@ -95,9 +95,9 @@ $(function(){
 	/*=========================================================================
 		Contact Form (NOT WORKING IN DEMO ONLY)
 	=========================================================================*/
-	$('#contact-form').validator().on('submit', function (e) {
+	/*$('#contact-form').validator().on('submit', function (e) {
 		if (!e.isDefaultPrevented()) {
-			e.preventDefault();
+			//e.preventDefault();
 			var $this = $(this),
 				//You can edit alerts here
 				alerts = {
@@ -117,6 +117,6 @@ $(function(){
 			$('#contact-form-result').html(alerts.success);
 			$('#contact-form').trigger('reset');
 		}
-	});
+	});*/
 	
 });

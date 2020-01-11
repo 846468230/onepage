@@ -741,9 +741,9 @@
 									
 									<div class='contact-form' >
 									
-										<form id='contact-form' data-toggle='validator' method='post' action='mail.php' >
-										
-											<div id='contact-form-result' ></div>
+										<form id='' data-toggle='validator' method='post' action="{% url 'home:form' %}" >
+											{% csrf_token %}
+											<div id='contact-form-result' >{% autoescape off %}{{ sendresult }}{% endautoescape %}</div>
 										
 											<div class='row' >
 												
@@ -782,7 +782,7 @@
 											</div>
 											
 											<div class='form-group text-center' >
-												<button type='submit' class='btn-custom btn-color' >
+												<button type='submit' id='btn' class='btn-custom btn-color' >
 													Send Message
 												</button>
 											</div>
